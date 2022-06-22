@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.fusionauth.example</groupId>
   <artifactId>scim-integration</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <dependencies>
 <dependency>
     <groupId>de.captaingoldfish</groupId>
@@ -15,7 +15,5 @@
     <artifactId>jackson-databind</artifactId>
     <version>2.13.3</version>
 </dependency>
-
-
   </dependencies>
 </project>
