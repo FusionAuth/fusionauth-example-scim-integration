@@ -2,7 +2,7 @@
 
 This is an example SCIM integration.
 
-You'll need maven installed as well as a modern version of java. Tested with java 17.
+You'll need an enterprise version of FusionAuth, maven and a modern version of java. Tested with java 17.
 
 To run it:
 
