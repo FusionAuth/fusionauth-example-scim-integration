@@ -39,17 +39,19 @@ import de.captaingoldfish.scim.sdk.common.response.ListResponse;
 
 public class ScimExample {
 
+// tag::scimConfiguration[]
 	// change these
-	private static final String SCIM_SERVER_ENTITY_ID = "a647e989-1c7e-4386-9ec6-fa4fe6908906";
-	private static final String EXISTING_USER_ID = "d4a3ba16-fc77-4a5c-8216-5f629a4afb62";
 	private static final String FUSIONAUTH_HOST = "https://local.fusionauth.io";
-	private static final String CLIENT_ID = "eb6fce6a-4ed8-4010-8091-1709fc823329";
+	private static final String SCIM_SERVER_ENTITY_ID = "70f195ba-0729-4b20-b07a-db8b6914acc4";
+	private static final String CLIENT_ID = "3cfba7c6-c178-41e3-9d4b-ac552666c639";
+	private static final String EXISTING_USER_ID = "d4a3ba16-fc77-4a5c-8216-5f629a4afb62";
+	private static final String CREATED_USER_LOGIN_ID = "test@example.com";
 	
 	// probably won't need to change these
 	private static final String SCIM_PERMISSIONS = "scim:user:read,scim:user:create";
 	private static final String SCIM_APPLICATION_BASE_URL = FUSIONAUTH_HOST+"/api/scim/resource/v2/";
-	
-
+	private static final String DEFAULT_USER_PASSWORD = "password";
+// end::scimConfiguration[]
 
 	public static void main(String[] args) throws Exception {
 		String secret = "";
@@ -61,37 +63,28 @@ public class ScimExample {
 		if (args.length == 2) {
 			operation = args[1];
 		}
-		
+
 		Map<String, String> headersMap = new HashMap<String,String>();
 		
 		headersMap.put("Authorization", "Bearer "+getCredentials(secret));
 		
-		ScimClientConfig scimClientConfig = ScimClientConfig.builder()
-				.connectTimeout(5)
-				.requestTimeout(5)
-				.socketTimeout(5)				
-                .hostnameVerifier((s, sslSession) -> true)
-				.httpHeaders(headersMap)
-				.build();
-		
-		ScimRequestBuilder scimRequestBuilder = new ScimRequestBuilder(SCIM_APPLICATION_BASE_URL, scimClientConfig);
-		
-		
-		if (operation == "get") {
-			getUser(scimRequestBuilder, EXISTING_USER_ID);	
-		} else if (operation == "list") {
-			listUsers(scimRequestBuilder);	
-		} else if (operation == "create") {
+		if ("get".equals(operation)) {
+			getUser(buildScimRequestBuilder(headersMap), EXISTING_USER_ID);	
+		} else if ("list".equals(operation)) {
+			listUsers(buildScimRequestBuilder(headersMap));	
+		} else if ("create".equals(operation)) {
+                        // for mutation operations only, need a different content type
 			headersMap.put("Content-type", "application/json");
-			createUser(scimRequestBuilder, "test@example.com","password");
+			createUser(buildScimRequestBuilder(headersMap), CREATED_USER_LOGIN_ID, DEFAULT_USER_PASSWORD);
 		} else {
-			getUser(scimRequestBuilder, EXISTING_USER_ID);
+			getUser(buildScimRequestBuilder(headersMap), EXISTING_USER_ID);
 		}
 		
 	}
 
+// tag::getCredentials[]
 	private static String getCredentials(String secret) throws AuthenticationException, IOException {
-		CloseableHttpClient client = HttpClients.createDefault();
+	    CloseableHttpClient client = HttpClients.createDefault();
 	    HttpPost httpPost = new HttpPost(FUSIONAUTH_HOST+"/oauth2/token");
 
 	    List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -118,12 +111,12 @@ public class ScimExample {
 	    
 	    return token;
 	}
+// end::getCredentials[]
 
-	private static void createUser(ScimRequestBuilder scimRequestBuilder, String email,String password) {
+// tags::createUser[]
+	private static void createUser(ScimRequestBuilder scimRequestBuilder, String username, String password) {
 		
-		List<Email> emails = new ArrayList<Email>();
-		emails.add(new Email("primary", Boolean.TRUE,"primary", email, ""));
-		User user = User.builder().password(password).emails(emails).active(true).build();
+		User user = User.builder().password(password).userName(username).active(true).build();
 		
 		String endpointPath = EndpointPaths.USERS; 
 		ServerResponse<User> response = scimRequestBuilder.create(User.class, endpointPath).setResource(user)
@@ -142,6 +135,7 @@ public class ScimExample {
 			 System.out.println("error response: "+errorResponse);
 		}
 	}
+// end::createUser[]
 
 
 	private static void getUser(ScimRequestBuilder scimRequestBuilder, String id) {
@@ -186,6 +180,18 @@ public class ScimExample {
 			 System.out.println("error response: "+errorResponse);
 		}
 	}
+
+
+        private static ScimRequestBuilder buildScimRequestBuilder(Map<String, String> headersMap) {
+		ScimClientConfig scimClientConfig = ScimClientConfig.builder()
+				.connectTimeout(5)
+				.requestTimeout(5)
+				.socketTimeout(5)				
+                                .hostnameVerifier((s, sslSession) -> true)
+				.httpHeaders(headersMap)
+				.build();
+		return new ScimRequestBuilder(SCIM_APPLICATION_BASE_URL, scimClientConfig);
+         }
 }
 
 
