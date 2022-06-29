@@ -113,7 +113,7 @@ public class ScimExample {
 	}
 // end::getCredentials[]
 
-// tags::createUser[]
+// tag::createUser[]
 	private static void createUser(ScimRequestBuilder scimRequestBuilder, String username, String password) {
 		
 		User user = User.builder().password(password).userName(username).active(true).build();
