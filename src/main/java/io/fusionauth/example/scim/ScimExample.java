@@ -45,7 +45,7 @@ public class ScimExample {
 	private static final String SCIM_SERVER_ENTITY_ID = "70f195ba-0729-4b20-b07a-db8b6914acc4";
 	private static final String CLIENT_ID = "3cfba7c6-c178-41e3-9d4b-ac552666c639";
 	private static final String EXISTING_USER_ID = "d4a3ba16-fc77-4a5c-8216-5f629a4afb62";
-	private static final String CREATED_USER_LOGIN_ID = "test2@example.com";
+	private static final String CREATED_USER_LOGIN_ID = "test@example.com";
 	
 	// probably won't need to change these
 	private static final String SCIM_PERMISSIONS = "scim:user:read,scim:user:create";
@@ -139,6 +139,7 @@ public class ScimExample {
 		} else {
 			ErrorResponse errorResponse = response.getErrorResponse();
 			// do something with it
+			System.out.println("error message status: " + response.getHttpStatus());
 			 System.out.println("error response: "+errorResponse);
 		}
 	}
