@@ -1,5 +1,9 @@
 # Example SCIM Integration
 
+> [!WARNING]
+> This repository is generated from content that lives at [github.com/FusionAuth/fusionauth-site](https://github.com/FusionAuth/fusionauth-site/tree/main/astro/extractedcode/example-scim-integration). Changes to files here _will be overwritten by that automation_. File an issue or pull request with [fusionauth-site](https://github.com/FusionAuth/fusionauth-site) instead.
+
+
 This is an example SCIM integration.
 
 You'll need an enterprise version of FusionAuth, maven and a modern version of java. Tested with java 17.
